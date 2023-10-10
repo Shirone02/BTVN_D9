@@ -4,13 +4,17 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +29,7 @@ import retrofit2.Response;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements IClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,6 +42,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvHome;
     private ProductAdapter productAdapter;
     private List<Product> listProduct;
+    private  ProductServices productServices;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -80,31 +85,26 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvHome=view.findViewById(R.id.rcFragmentHome);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this.getContext(),RecyclerView.VERTICAL,false);
-        rvHome.setLayoutManager(linearLayoutManager);
-        getData();
-        productAdapter = new ProductAdapter(listProduct);
-        rvHome.setAdapter(productAdapter);
+        initView(view);
+        initData();
     }
 
-    private void getData() {
-        listProduct = new ArrayList<>();
-        RetrofitClient.create(DummyServices.class).getProducts().enqueue(new Callback<ProductsResponse>() {
+    private void initData() {
+        productServices = RetrofitClient.create(ProductServices.class);
+
+        productServices.getProducts().enqueue(new Callback<ProductsResponse>() {
             @Override
             public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
-                if(response.isSuccessful()){
-                    if(response.code() == 200){
-                        ProductsResponse productResponse=response.body();
-                        List<Product> listAllProduct=productResponse.getProducts();
-                        List<Product> listProductHotDeal=listAllProduct.stream()
-                                .filter(product -> product.getRating() >4.9)
-                                .collect(Collectors.toList());
-                        Product product = new Product("Hot deals", listProductHotDeal);
-                        listProduct.add(product);
-                    }
-                }
+                ProductsResponse productsResponse = response.body();
+                listProduct = new ArrayList<>();
+                listProduct = productsResponse.getProducts();
+                productAdapter  = new ProductAdapter(HomeFragment.this,listProduct);
+                rvHome.setAdapter(productAdapter);
+
+                getProductsByCategory(listProduct);
             }
+
+
 
             @Override
             public void onFailure(Call<ProductsResponse> call, Throwable t) {
@@ -112,4 +112,51 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+    private void getProductsByCategory(List<Product> listProduct) {
+        List<Product> products = listProduct.stream()
+                .filter(product -> product.getCategory().equals("smartphones"))
+                .collect(Collectors.toList());
+
+        productAdapter = new ProductAdapter(HomeFragment.this, products);
+        rvHome.setAdapter(productAdapter);
+    }
+    private void initView(View view) {
+        rvHome = view.findViewById(R.id.rcFragmentHome);
+    }
+
+    @Override
+    public void onItemClick(int productID) {
+        // Sử dụng NavController để navigate đến ProductDetailsFragment
+        Bundle bundle = new Bundle();
+        bundle.putString("id", String.valueOf(productID));
+
+        NavController navController = NavHostFragment.findNavController(HomeFragment.this);
+        navController.navigate(R.id.action_homeFragment_to_productFragment, bundle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Hiển thị BottomNavigationView và clAppbar khi quay lại HomeFragment
+        BottomNavigationView bottom_nav = requireActivity().findViewById(R.id.bottom_nav);
+        ConstraintLayout clAppbar = requireActivity().findViewById(R.id.clAppbar);
+
+        bottom_nav.setVisibility(View.VISIBLE);
+        clAppbar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // Ẩn BottomNavigationView và clAppbar khi chuyển sang ProductDetailsFragment
+        BottomNavigationView bottom_nav = requireActivity().findViewById(R.id.bottom_nav);
+        ConstraintLayout clAppbar = requireActivity().findViewById(R.id.clAppbar);
+
+        bottom_nav.setVisibility(View.GONE);
+        clAppbar.setVisibility(View.GONE);
+    }
+
 }
