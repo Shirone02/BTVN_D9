@@ -12,7 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,7 +83,33 @@ public class HomeFragment extends Fragment {
         rvHome=view.findViewById(R.id.rcFragmentHome);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this.getContext(),RecyclerView.VERTICAL,false);
         rvHome.setLayoutManager(linearLayoutManager);
+        getData();
         productAdapter = new ProductAdapter(listProduct);
         rvHome.setAdapter(productAdapter);
+    }
+
+    private void getData() {
+        listProduct = new ArrayList<>();
+        RetrofitClient.create(DummyServices.class).getProducts().enqueue(new Callback<ProductsResponse>() {
+            @Override
+            public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
+                if(response.isSuccessful()){
+                    if(response.code() == 200){
+                        ProductsResponse productResponse=response.body();
+                        List<Product> listAllProduct=productResponse.getProducts();
+                        List<Product> listProductHotDeal=listAllProduct.stream()
+                                .filter(product -> product.getRating() >4.9)
+                                .collect(Collectors.toList());
+                        Product product = new Product("Hot deals", listProductHotDeal);
+                        listProduct.add(product);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductsResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

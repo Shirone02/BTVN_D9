@@ -41,6 +41,9 @@ public class Product {
     @Expose
     private List<String> images;
 
+    public Product(String hotDeals, List<Product> listProductHotDeal) {
+    }
+
     public Integer getId() {
         return id;
     }
