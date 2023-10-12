@@ -1,10 +1,9 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.interfaces;
 
-import com.example.btvn_d9.ProductsResponse;
+import com.example.btvn_d9.responds.ProductsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 
 public interface ProductServices {
     @GET("products?limit=0")

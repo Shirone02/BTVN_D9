@@ -1,4 +1,4 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.fragments;
 
 import android.os.Bundle;
 
@@ -14,6 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.btvn_d9.interfaces.IClickListener;
+import com.example.btvn_d9.models.Product;
+import com.example.btvn_d9.adapter.ProductAdapter;
+import com.example.btvn_d9.interfaces.ProductServices;
+import com.example.btvn_d9.responds.ProductsResponse;
+import com.example.btvn_d9.R;
+import com.example.btvn_d9.retrofit.RetrofitClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -39,10 +46,10 @@ public class HomeFragment extends Fragment implements IClickListener {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private RecyclerView rvHome;
-    private ProductAdapter productAdapter;
-    private List<Product> listProduct;
-    private  ProductServices productServices;
+    private RecyclerView rvHotDeals, rvMostPopular;
+    private ProductAdapter mHotDealsAdapter, mPopularAdapter;
+    private List<Product> mListProducts;
+    private ProductServices productServices;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -96,15 +103,13 @@ public class HomeFragment extends Fragment implements IClickListener {
             @Override
             public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
                 ProductsResponse productsResponse = response.body();
-                listProduct = new ArrayList<>();
-                listProduct = productsResponse.getProducts();
-                productAdapter  = new ProductAdapter(HomeFragment.this,listProduct);
-                rvHome.setAdapter(productAdapter);
+                mListProducts = new ArrayList<>();
+                mListProducts = productsResponse.getProducts();
+                mHotDealsAdapter = new ProductAdapter(mListProducts, HomeFragment.this);
+                rvHotDeals.setAdapter(mHotDealsAdapter);
 
-                getProductsByCategory(listProduct);
+                getProducts(mListProducts);
             }
-
-
 
             @Override
             public void onFailure(Call<ProductsResponse> call, Throwable t) {
@@ -113,16 +118,18 @@ public class HomeFragment extends Fragment implements IClickListener {
         });
     }
 
-    private void getProductsByCategory(List<Product> listProduct) {
-        List<Product> products = listProduct.stream()
+    private void initView(View view) {
+        rvHotDeals = view.findViewById(R.id.rvHotDeals);
+        rvMostPopular = view.findViewById(R.id.rvMostPopular);
+    }
+
+    public void getProducts(List<Product> mListProducts){
+        List<Product> listProducts = mListProducts.stream()
                 .filter(product -> product.getCategory().equals("smartphones"))
                 .collect(Collectors.toList());
 
-        productAdapter = new ProductAdapter(HomeFragment.this, products);
-        rvHome.setAdapter(productAdapter);
-    }
-    private void initView(View view) {
-        rvHome = view.findViewById(R.id.rcFragmentHome);
+        mPopularAdapter = new ProductAdapter(listProducts, HomeFragment.this);
+        rvMostPopular.setAdapter(mPopularAdapter);
     }
 
     @Override

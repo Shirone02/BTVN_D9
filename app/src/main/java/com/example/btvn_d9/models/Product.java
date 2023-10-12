@@ -1,4 +1,4 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -40,6 +40,9 @@ public class Product {
     @SerializedName("images")
     @Expose
     private List<String> images;
+
+    public Product() {
+    }
 
     public Product(String hotDeals, List<Product> listProductHotDeal) {
     }

@@ -1,15 +1,16 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.responds;
 
+import com.example.btvn_d9.models.Product;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CartsResponse {
+public class ProductsResponse {
 
-    @SerializedName("carts")
+    @SerializedName("products")
     @Expose
-    private List<Cart> carts;
+    private List<Product> products;
     @SerializedName("total")
     @Expose
     private Integer total;
@@ -20,12 +21,12 @@ public class CartsResponse {
     @Expose
     private Integer limit;
 
-    public List<Cart> getCarts() {
-        return carts;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setCarts(List<Cart> carts) {
-        this.carts = carts;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public Integer getTotal() {

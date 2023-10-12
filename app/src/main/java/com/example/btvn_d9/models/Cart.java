@@ -1,4 +1,4 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

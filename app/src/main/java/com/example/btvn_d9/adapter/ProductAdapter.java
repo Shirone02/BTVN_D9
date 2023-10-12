@@ -1,4 +1,4 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,9 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.btvn_d9.R;
+import com.example.btvn_d9.fragments.HomeFragment;
+import com.example.btvn_d9.interfaces.IClickListener;
+import com.example.btvn_d9.models.Product;
 
 import java.util.List;
 import java.util.Random;
@@ -19,13 +24,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private Context mContext;
     private List<Product> mListProducts;
+    private IClickListener iClickListener;
+
+    public ProductAdapter(List<Product> mListProducts, IClickListener iClickListener) {
+        this.mListProducts = mListProducts;
+        this.iClickListener = iClickListener;
+    }
 
     public ProductAdapter(HomeFragment homeFragment, List<Product> mListProducts) {
         this.mListProducts = mListProducts;
     }
 
-    public ProductAdapter(Context mContext, List<Product> mListProducts) {
-        this.mContext = mContext;
+    public ProductAdapter(List<Product> mListProducts) {
         this.mListProducts = mListProducts;
     }
 
@@ -55,6 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView tvTitle, tvPrice, tvRating;
+        ConstraintLayout clProduct;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +74,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvRating = itemView.findViewById(R.id.tvRating);
+
+            clProduct = itemView.findViewById(R.id.clProduct);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition(); // vị trí của sản phẩm đã bấm vào
+                    if(position != RecyclerView.NO_POSITION){
+                        int productID = mListProducts.get(position).getId(); // lấy ID của sản phẩm tại vị trí
+                        iClickListener.onItemClick(productID);
+                    }
+                }
+            });
 
         }
     }

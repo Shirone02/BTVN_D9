@@ -1,4 +1,6 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.interfaces;
+
+import com.example.btvn_d9.responds.CartsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

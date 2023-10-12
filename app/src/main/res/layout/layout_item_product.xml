@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clProduct"
         android:layout_width="160dp"
         android:layout_height="300dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,12 +59,12 @@
                     android:textStyle="bold"
                     android:text="Samsung" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/img3"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
-                    android:src="@drawable/img_3"
+                    android:src="@drawable/ic_wish"
                     android:layout_width="15dp"
                     android:layout_height="15dp"/>
             </RelativeLayout>

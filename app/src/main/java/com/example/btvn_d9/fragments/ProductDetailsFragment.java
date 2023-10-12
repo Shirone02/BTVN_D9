@@ -1,4 +1,4 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.fragments;
 
 import android.os.Bundle;
 
@@ -10,6 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.btvn_d9.models.Product;
+import com.example.btvn_d9.R;
+import com.example.btvn_d9.retrofit.RetrofitClient;
+import com.example.btvn_d9.interfaces.ProductServices;
+import com.example.btvn_d9.responds.ProductsResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,21 +39,16 @@ public class ProductDetailsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private TextView tvDetails;
+    private TextView tvTitle, tvPrice;
+    private ProductServices productServices;
+    private List<Product> mListProducts;
+
+
 
     public ProductDetailsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProductFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProductDetailsFragment newInstance(String param1, String param2) {
         ProductDetailsFragment fragment = new ProductDetailsFragment();
         Bundle args = new Bundle();
@@ -70,10 +78,46 @@ public class ProductDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvDetails = view.findViewById(R.id.tvDetails);
+        initData();
+        initView(view);
 
-        String productID = getArguments().getString("product_id", null);
-        tvDetails.setText(productID);
+    }
 
+    private void initView(View view) {
+        tvTitle = view.findViewById(R.id.tvTitle);
+        tvPrice = view.findViewById(R.id.tvPrice);
+    }
+
+    private void initData() {
+        String productID = getArguments().getString("id");
+
+        if(productID != null) {
+            productServices = RetrofitClient.create(ProductServices.class);
+            productServices.getProducts().enqueue(new Callback<ProductsResponse>() {
+                @Override
+                public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
+                    ProductsResponse productsResponse = response.body();
+                    mListProducts = new ArrayList<>();
+                    mListProducts = productsResponse.getProducts();
+                    Product product = getProductById(mListProducts, Integer.parseInt(productID));
+
+                    tvTitle.setText(product.getTitle());
+                    tvPrice.setText("$" + product.getPrice());
+                }
+
+                @Override
+                public void onFailure(Call<ProductsResponse> call, Throwable t) {
+
+                }
+            });
+        }
+
+    }
+
+    private Product getProductById(List<Product> listProducts, int id) {
+        return listProducts.stream()
+                .filter(product -> product.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 }

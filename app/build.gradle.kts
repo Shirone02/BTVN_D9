@@ -45,7 +45,8 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
     // Java language implementation
-    implementation("androidx.navigation:navigation-fragment:2.7.4")
-    implementation("androidx.navigation:navigation-ui:2.7.4")
+    implementation("androidx.navigation:navigation-fragment:2.3.5")
+    implementation("androidx.navigation:navigation-ui:2.3.5")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }

@@ -1,12 +1,10 @@
-package com.example.btvn_d9;
+package com.example.btvn_d9.interfaces;
 
-import com.google.gson.JsonObject;
+import com.example.btvn_d9.models.Product;
+import com.example.btvn_d9.responds.ProductsResponse;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -21,8 +19,8 @@ public interface DummyServices {
     @GET("products/search")
     Call<ProductsResponse> searchByProductName(@Query("q") String productName);
 
-    @Headers("Content-Type: application/json")
-    @POST("product/add")
-    Call<JsonObject> addProduct(@Body AddProductRequest addProductRequest);
+//    @Headers("Content-Type: application/json")
+//    @POST("product/add")
+//    Call<JsonObject> addProduct(@Body AddProductRequest addProductRequest);
 
 }
